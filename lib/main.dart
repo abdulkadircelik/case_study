@@ -162,6 +162,9 @@ class _StartPageState extends State<StartPage> {
       final token = await _storageService.getToken();
       final userData = await _storageService.getUserData();
 
+      // Widget hala mounted mı kontrol et
+      if (!mounted) return;
+
       if (token != null && userData != null) {
         // Token varsa direkt home page'e git
         Navigator.pushReplacement(
@@ -176,6 +179,9 @@ class _StartPageState extends State<StartPage> {
         );
       }
     } catch (e) {
+      // Widget hala mounted mı kontrol et
+      if (!mounted) return;
+
       // Hata durumunda login page'e git
       Navigator.pushReplacement(
         context,
