@@ -1,0 +1,290 @@
+import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../widgets/custom_text_field.dart';
+import '../widgets/social_login_button.dart';
+import 'register_page.dart';
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isPasswordVisible = false;
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _togglePasswordVisibility() {
+    setState(() {
+      _isPasswordVisible = !_isPasswordVisible;
+    });
+  }
+
+  Future<void> _handleLogin() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Simulate API call
+      await Future.delayed(const Duration(seconds: 2));
+
+      // TODO: Implement actual login logic
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('auth.login_success'.tr()),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('auth.login_error'.tr()),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  void _handleSocialLogin(String provider) {
+    // TODO: Implement social login
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$provider ile giriş yapılıyor...'),
+        backgroundColor: AppTheme.primaryColor,
+      ),
+    );
+  }
+
+  void _handleForgotPassword() {
+    // TODO: Navigate to forgot password page
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Şifre sıfırlama sayfasına yönlendiriliyorsunuz...'),
+      ),
+    );
+  }
+
+  void _handleRegister() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const RegisterPage()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppTheme.backgroundColor,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 60),
+
+                // Welcome Text
+                Text(
+                  'auth.welcome'.tr(),
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.textPrimaryColor,
+                  ),
+                  textAlign: TextAlign.center,
+                ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.3),
+
+                const SizedBox(height: 16),
+
+                Text(
+                      'auth.welcome_subtitle'.tr(),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: AppTheme.textSecondaryColor,
+                        height: 1.5,
+                      ),
+                      textAlign: TextAlign.center,
+                    )
+                    .animate()
+                    .fadeIn(delay: 200.ms, duration: 600.ms)
+                    .slideY(begin: -0.3),
+
+                const SizedBox(height: 48),
+
+                // Email Field
+                CustomTextField(
+                      controller: _emailController,
+                      hintText: 'auth.email'.tr(),
+                      prefixIcon: Icons.email_outlined,
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'auth.email_required'.tr();
+                        }
+                        if (!RegExp(
+                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                        ).hasMatch(value)) {
+                          return 'auth.email_invalid'.tr();
+                        }
+                        return null;
+                      },
+                    )
+                    .animate()
+                    .fadeIn(delay: 400.ms, duration: 600.ms)
+                    .slideX(begin: -0.3),
+
+                const SizedBox(height: 16),
+
+                // Password Field
+                CustomTextField(
+                      controller: _passwordController,
+                      hintText: 'auth.password'.tr(),
+                      prefixIcon: Icons.lock_outlined,
+                      obscureText: !_isPasswordVisible,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: AppTheme.textSecondaryColor,
+                        ),
+                        onPressed: _togglePasswordVisibility,
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'auth.password_required'.tr();
+                        }
+                        if (value.length < 6) {
+                          return 'auth.password_min_length'.tr();
+                        }
+                        return null;
+                      },
+                    )
+                    .animate()
+                    .fadeIn(delay: 600.ms, duration: 600.ms)
+                    .slideX(begin: -0.3),
+
+                const SizedBox(height: 16),
+
+                // Forgot Password
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton(
+                    onPressed: _handleForgotPassword,
+                    child: Text(
+                      'auth.forgot_password'.tr(),
+                      style: const TextStyle(
+                        color: AppTheme.textPrimaryColor,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ).animate().fadeIn(delay: 800.ms, duration: 600.ms),
+
+                const SizedBox(height: 24),
+
+                // Login Button
+                ElevatedButton(
+                      onPressed: _isLoading ? null : _handleLogin,
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppTheme.textPrimaryColor,
+                                ),
+                              ),
+                            )
+                          : Text('auth.login'.tr()),
+                    )
+                    .animate()
+                    .fadeIn(delay: 1000.ms, duration: 600.ms)
+                    .slideY(begin: 0.3),
+
+                const SizedBox(height: 32),
+
+                // Social Login
+                Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        SocialLoginButton(
+                          icon: FontAwesomeIcons.google,
+                          onPressed: () => _handleSocialLogin('Google'),
+                        ),
+                        SocialLoginButton(
+                          icon: FontAwesomeIcons.apple,
+                          onPressed: () => _handleSocialLogin('Apple'),
+                        ),
+                        SocialLoginButton(
+                          icon: FontAwesomeIcons.facebook,
+                          onPressed: () => _handleSocialLogin('Facebook'),
+                        ),
+                      ],
+                    )
+                    .animate()
+                    .fadeIn(delay: 1200.ms, duration: 600.ms)
+                    .slideY(begin: 0.3),
+
+                const SizedBox(height: 32),
+
+                // Register Link
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'auth.no_account'.tr(),
+                      style: const TextStyle(
+                        color: AppTheme.textSecondaryColor,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: _handleRegister,
+                      child: Text(
+                        'auth.register'.tr(),
+                        style: const TextStyle(
+                          color: AppTheme.textPrimaryColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ).animate().fadeIn(delay: 1400.ms, duration: 600.ms),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

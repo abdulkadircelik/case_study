@@ -1,0 +1,80 @@
+{
+  "auth": {
+    "welcome": "Merhabalar",
+    "welcome_subtitle": "Tempus varius a vitae interdum id tortor elementum tristique eleifend at.",
+    "register_welcome": "Hoşgeldiniz",
+    "register_subtitle": "Tempus varius a vitae interdum id tortor elementum tristique eleifend at.",
+    "full_name": "Ad Soyad",
+    "email": "E-Posta",
+    "password": "Şifre",
+    "password_confirm": "Şifre Tekrar",
+    "forgot_password": "Şifremi unuttum",
+    "login": "Giriş Yap",
+    "register": "Kayıt Ol",
+    "register_now": "Şimdi Kaydol",
+    "no_account": "Bir hesabın yok mu?",
+    "has_account": "Zaten bir hesabın var mı?",
+    "social_login": "Sosyal medya ile giriş yap",
+    "user_agreement": "Kullanıcı sözleşmesini okudum ve kabul ediyorum. Bu sözelşmeyi okuyarak devam ediniz lütfen.",
+    "agreement_link": "okudum ve kabul ediyorum",
+    "email_required": "E-posta adresi gereklidir",
+    "email_invalid": "Geçerli bir e-posta adresi giriniz",
+    "password_required": "Şifre gereklidir",
+    "password_min_length": "Şifre en az 6 karakter olmalıdır",
+    "password_confirm_required": "Şifre tekrarı gereklidir",
+    "password_mismatch": "Şifreler eşleşmiyor",
+    "full_name_required": "Ad soyad gereklidir",
+    "agreement_required": "Kullanıcı sözleşmesini kabul etmelisiniz",
+    "login_success": "Giriş başarılı",
+    "login_error": "Giriş başarısız",
+    "register_success": "Kayıt başarılı",
+    "register_error": "Kayıt başarısız",
+    "invalid_credentials": "Geçersiz e-posta veya şifre"
+  },
+  "upload": {
+    "profile_detail": "Profil Detayı",
+    "upload_photos": "Fotoğraflarınızı Yükleyin",
+    "upload_subtitle": "Resources out incentivize relaxation floor loss cc.",
+    "continue": "Devam Et",
+    "select_photo": "Fotoğraf Seç",
+    "take_photo": "Fotoğraf Çek",
+    "photo_uploaded": "Fotoğraf başarıyla yüklendi",
+    "photo_upload_error": "Fotoğraf yükleme hatası",
+    "permission_denied": "Kamera ve galeri izni gerekli",
+    "no_photo_selected": "Lütfen bir fotoğraf seçin"
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "success": "Başarılı",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "confirm": "Onayla",
+    "retry": "Tekrar Dene",
+    "close": "Kapat",
+    "next": "İleri",
+    "previous": "Geri",
+    "done": "Tamam",
+    "ok": "Tamam",
+    "yes": "Evet",
+    "no": "Hayır"
+  },
+  "validation": {
+    "required": "Bu alan gereklidir",
+    "email": "Geçerli bir e-posta adresi giriniz",
+    "min_length": "En az {length} karakter olmalıdır",
+    "max_length": "En fazla {length} karakter olmalıdır",
+    "password_match": "Şifreler eşleşmiyor"
+  },
+  "theme": {
+    "dark": "Koyu",
+    "light": "Açık",
+    "system": "Sistem"
+  },
+  "language": {
+    "turkish": "Türkçe",
+    "english": "İngilizce"
+  }
+} 

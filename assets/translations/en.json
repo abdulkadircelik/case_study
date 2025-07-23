@@ -1,0 +1,80 @@
+{
+  "auth": {
+    "welcome": "Hello",
+    "welcome_subtitle": "Tempus varius a vitae interdum id tortor elementum tristique eleifend at.",
+    "register_welcome": "Welcome",
+    "register_subtitle": "Tempus varius a vitae interdum id tortor elementum tristique eleifend at.",
+    "full_name": "Full Name",
+    "email": "Email",
+    "password": "Password",
+    "password_confirm": "Confirm Password",
+    "forgot_password": "Forgot Password",
+    "login": "Login",
+    "register": "Register",
+    "register_now": "Register Now",
+    "no_account": "Don't have an account?",
+    "has_account": "Already have an account?",
+    "social_login": "Login with social media",
+    "user_agreement": "I have read and accept the user agreement. Please continue by reading this agreement.",
+    "agreement_link": "I have read and accept",
+    "email_required": "Email is required",
+    "email_invalid": "Please enter a valid email address",
+    "password_required": "Password is required",
+    "password_min_length": "Password must be at least 6 characters",
+    "password_confirm_required": "Password confirmation is required",
+    "password_mismatch": "Passwords do not match",
+    "full_name_required": "Full name is required",
+    "agreement_required": "You must accept the user agreement",
+    "login_success": "Login successful",
+    "login_error": "Login failed",
+    "register_success": "Registration successful",
+    "register_error": "Registration failed",
+    "invalid_credentials": "Invalid email or password"
+  },
+  "upload": {
+    "profile_detail": "Profile Detail",
+    "upload_photos": "Upload Your Photos",
+    "upload_subtitle": "Resources out incentivize relaxation floor loss cc.",
+    "continue": "Continue",
+    "select_photo": "Select Photo",
+    "take_photo": "Take Photo",
+    "photo_uploaded": "Photo uploaded successfully",
+    "photo_upload_error": "Photo upload error",
+    "permission_denied": "Camera and gallery permission required",
+    "no_photo_selected": "Please select a photo"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "confirm": "Confirm",
+    "retry": "Retry",
+    "close": "Close",
+    "next": "Next",
+    "previous": "Previous",
+    "done": "Done",
+    "ok": "OK",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Please enter a valid email address",
+    "min_length": "Must be at least {length} characters",
+    "max_length": "Must be at most {length} characters",
+    "password_match": "Passwords do not match"
+  },
+  "theme": {
+    "dark": "Dark",
+    "light": "Light",
+    "system": "System"
+  },
+  "language": {
+    "turkish": "Turkish",
+    "english": "English"
+  }
+} 
