@@ -12,6 +12,10 @@ import '../../features/home/data/services/movie_api_service.dart';
 import '../../features/home/data/repositories/movie_repository_impl.dart';
 import '../../features/home/domain/repositories/movie_repository.dart';
 import '../../features/home/presentation/bloc/home_bloc.dart';
+import '../../features/profile/data/services/user_profile_api_service.dart';
+import '../../features/profile/data/repositories/profile_repository_impl.dart';
+import '../../features/profile/domain/repositories/profile_repository.dart';
+import '../../features/profile/presentation/bloc/profile_bloc.dart';
 
 final getIt = GetIt.instance;
 
@@ -70,6 +74,7 @@ Future<void> configureDependencies() async {
   // API Services
   getIt.registerSingleton<AuthApiService>(AuthApiService(dio));
   getIt.registerSingleton<MovieApiService>(MovieApiService(dio));
+  getIt.registerSingleton<UserProfileApiService>(UserProfileApiService(dio));
 
   // Repositories
   getIt.registerSingleton<AuthRepository>(
@@ -77,6 +82,12 @@ Future<void> configureDependencies() async {
   );
   getIt.registerSingleton<MovieRepository>(
     MovieRepositoryImpl(getIt<MovieApiService>()),
+  );
+  getIt.registerSingleton<ProfileRepository>(
+    ProfileRepositoryImpl(
+      getIt<UserProfileApiService>(),
+      getIt<MovieApiService>(),
+    ),
   );
 
   // Blocs
@@ -88,5 +99,8 @@ Future<void> configureDependencies() async {
   );
   getIt.registerFactory<HomeBloc>(
     () => HomeBloc(movieRepository: getIt<MovieRepository>()),
+  );
+  getIt.registerFactory<ProfileBloc>(
+    () => ProfileBloc(profileRepository: getIt<ProfileRepository>()),
   );
 }

@@ -9,6 +9,7 @@ import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
 import '../widgets/movie_card.dart';
 import '../widgets/bottom_navigation_bar.dart';
+import '../../domain/models/movie_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -46,6 +47,111 @@ class _HomePageState extends State<HomePage> {
 
   void _onRefresh() {
     _homeBloc.add(const LoadMovies(refresh: true));
+  }
+
+  void _showMovieDetails(BuildContext context, MovieModel movie) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.8,
+        decoration: const BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Handle bar
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[600],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Movie title
+              Text(
+                movie.title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Movie details
+              _buildDetailRow('Yıl', movie.year),
+              _buildDetailRow('Tür', movie.genre),
+              _buildDetailRow('Süre', movie.runtime),
+              _buildDetailRow('Yönetmen', movie.director),
+              _buildDetailRow('Oyuncular', movie.actors),
+              _buildDetailRow('IMDB Puanı', movie.imdbRating),
+              const SizedBox(height: 20),
+
+              // Plot
+              Text(
+                'Özet',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                movie.plot,
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 16,
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -100,7 +206,7 @@ class _HomePageState extends State<HomePage> {
                 controller: _scrollController,
                 slivers: [
                   // App Bar
-                  SliverAppBar(
+                  /*    SliverAppBar(
                     backgroundColor: Colors.transparent,
                     elevation: 0,
                     floating: true,
@@ -112,44 +218,44 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     centerTitle: true,
-                  ),
+                  ),*/
 
                   // Movies List
-                  SliverPadding(
-                    padding: const EdgeInsets.all(16.0),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        if (index >= movies.length) {
-                          if (hasNextPage && state is HomeLoadingMore) {
-                            return const Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    AppTheme.primaryColor,
-                                  ),
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      if (index >= movies.length) {
+                        if (hasNextPage && state is HomeLoadingMore) {
+                          return const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppTheme.primaryColor,
                                 ),
                               ),
-                            );
-                          }
-                          return const SizedBox.shrink();
+                            ),
+                          );
                         }
+                        return const SizedBox.shrink();
+                      }
 
-                        final movie = movies[index];
-                        return MovieCard(
-                              movie: movie,
-                              onFavoriteToggle: () {
-                                _homeBloc.add(ToggleFavorite(movie.id));
-                              },
-                            )
-                            .animate()
-                            .fadeIn(
-                              delay: Duration(milliseconds: index * 100),
-                              duration: 600.ms,
-                            )
-                            .slideY(begin: 0.3, duration: 600.ms);
-                      }, childCount: movies.length + (hasNextPage ? 1 : 0)),
-                    ),
+                      final movie = movies[index];
+                      return MovieCard(
+                            movie: movie,
+                            onFavoriteToggle: () {
+                              _homeBloc.add(ToggleFavorite(movie.id));
+                            },
+                            onMoreDetails: () {
+                              _showMovieDetails(context, movie);
+                            },
+                          )
+                          .animate()
+                          .fadeIn(
+                            delay: Duration(milliseconds: index * 100),
+                            duration: 600.ms,
+                          )
+                          .slideY(begin: 0.3, duration: 600.ms);
+                    }, childCount: movies.length + (hasNextPage ? 1 : 0)),
                   ),
                 ],
               );

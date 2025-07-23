@@ -23,13 +23,23 @@ class MovieRepositoryImpl implements MovieRepository {
   @override
   Future<void> toggleFavorite(String movieId) async {
     try {
-      // Mock API call
-      await Future.delayed(const Duration(milliseconds: 500));
-      // Simulate success
+      await _apiService.toggleFavorite(movieId);
     } on DioException catch (e) {
       throw _handleDioError(e);
     } catch (e) {
       throw Exception('Toggle favorite failed: $e');
+    }
+  }
+
+  @override
+  Future<MovieResponseModel> getFavoriteMovies() async {
+    try {
+      final response = await _apiService.getFavoriteMovies();
+      return response;
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    } catch (e) {
+      throw Exception('Get favorite movies failed: $e');
     }
   }
 
