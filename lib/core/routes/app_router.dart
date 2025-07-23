@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/auth/presentation/pages/upload_photo_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/home/presentation/pages/firebase_test_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../di/injection.dart';
 import '../services/navigation_service.dart';
@@ -13,6 +15,7 @@ import '../theme/app_theme.dart';
 final GoRouter appRouter = GoRouter(
   navigatorKey: getIt<NavigationService>().navigatorKey,
   initialLocation: '/',
+  observers: [FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance)],
   routes: [
     GoRoute(
       path: '/',
@@ -38,6 +41,11 @@ final GoRouter appRouter = GoRouter(
       path: '/home',
       name: 'home',
       builder: (context, state) => const HomePage(),
+    ),
+    GoRoute(
+      path: '/firebase-test',
+      name: 'firebase-test',
+      builder: (context, state) => const FirebaseTestPage(),
     ),
     GoRoute(
       path: '/profile',

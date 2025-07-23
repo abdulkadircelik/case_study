@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 //import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
-// import 'package:firebase_core/firebase_core.dart';
-// import 'firebase_options.dart';
-// import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-// import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -20,10 +19,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase
-  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Initialize Crashlytics
-  // FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
   // Initialize dependencies
   await configureDependencies();
@@ -98,10 +97,7 @@ class _MyAppState extends State<MyApp> {
         // Router
         routerConfig: appRouter,
 
-        // Firebase Analytics
-        // navigatorObservers: [
-        //   FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
-        // ],
+        // Firebase Analytics - GoRouter ile entegre edilecek
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
 import '../bloc/home_bloc.dart';
@@ -206,7 +207,7 @@ class _HomePageState extends State<HomePage> {
                 controller: _scrollController,
                 slivers: [
                   // App Bar
-                  /*    SliverAppBar(
+                  SliverAppBar(
                     backgroundColor: Colors.transparent,
                     elevation: 0,
                     floating: true,
@@ -218,7 +219,17 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     centerTitle: true,
-                  ),*/
+                    actions: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.bug_report,
+                          color: Colors.orange,
+                        ),
+                        onPressed: () => context.go('/firebase-test'),
+                        tooltip: 'Firebase Test',
+                      ),
+                    ],
+                  ),
 
                   // Movies List
                   SliverList(

@@ -24,10 +24,6 @@ class DefaultFirebaseOptions {
         return android;
       case TargetPlatform.iOS:
         return ios;
-      case TargetPlatform.macOS:
-        return macos;
-      case TargetPlatform.windows:
-        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -50,38 +46,21 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'your-api-key',
-    appId: 'your-app-id',
-    messagingSenderId: 'your-sender-id',
-    projectId: 'your-project-id',
-    storageBucket: 'your-project-id.appspot.com',
+    apiKey: 'AIzaSyCHX5531r3N2JmWfGl_m6Rx8f1O6A_8px4',
+    appId: '1:991318587825:android:f78230515df7f07f12e590',
+    messagingSenderId: '991318587825',
+    projectId: 'sinflix-6cf46',
+    storageBucket: 'sinflix-6cf46.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'your-api-key',
-    appId: 'your-app-id',
-    messagingSenderId: 'your-sender-id',
-    projectId: 'your-project-id',
-    storageBucket: 'your-project-id.appspot.com',
-    iosClientId: 'your-ios-client-id',
+    apiKey: 'AIzaSyC0rVjKJbxgSCzjNe5aWwXyukdpdTzkZl8',
+    appId: '1:991318587825:ios:031320df686c304412e590',
+    messagingSenderId: '991318587825',
+    projectId: 'sinflix-6cf46',
+    storageBucket: 'sinflix-6cf46.firebasestorage.app',
+    iosClientId:
+        '991318587825-031320df686c304412e590.apps.googleusercontent.com',
     iosBundleId: 'com.example.caseStudy',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'your-api-key',
-    appId: 'your-app-id',
-    messagingSenderId: 'your-sender-id',
-    projectId: 'your-project-id',
-    storageBucket: 'your-project-id.appspot.com',
-    iosClientId: 'your-ios-client-id',
-    iosBundleId: 'com.example.caseStudy',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'your-api-key',
-    appId: 'your-app-id',
-    messagingSenderId: 'your-sender-id',
-    projectId: 'your-project-id',
-    storageBucket: 'your-project-id.appspot.com',
   );
 }
