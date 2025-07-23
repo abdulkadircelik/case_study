@@ -7,20 +7,26 @@ import '../../domain/models/register_request_model.dart';
 import '../../domain/models/register_response_model.dart';
 import '../../domain/models/upload_photo_response_model.dart';
 import '../services/auth_api_service.dart';
+import '../../../../core/services/logger_service.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthApiService _apiService;
+  final LoggerService _logger;
 
-  AuthRepositoryImpl(this._apiService);
+  AuthRepositoryImpl(this._apiService, this._logger);
 
   @override
   Future<LoginResponseModel> login(LoginRequestModel request) async {
     try {
+      _logger.info('Login attempt for: ${request.email}');
       final response = await _apiService.login(request);
+      _logger.info('Login successful for: ${request.email}');
       return response.data;
     } on DioException catch (e) {
+      _logger.error('Login failed for: ${request.email}', e);
       throw _handleDioError(e);
     } catch (e) {
+      _logger.error('Login failed for: ${request.email}', e);
       throw Exception('Login failed: $e');
     }
   }
@@ -28,11 +34,15 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<RegisterResponseModel> register(RegisterRequestModel request) async {
     try {
+      _logger.info('Register attempt for: ${request.email}');
       final response = await _apiService.register(request);
+      _logger.info('Register successful for: ${request.email}');
       return response.data;
     } on DioException catch (e) {
+      _logger.error('Register failed for: ${request.email}', e);
       throw _handleDioError(e);
     } catch (e) {
+      _logger.error('Register failed for: ${request.email}', e);
       throw Exception('Register failed: $e');
     }
   }
@@ -40,16 +50,15 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<UploadPhotoResponseModel> uploadPhoto(File file) async {
     try {
-      print('Upload Photo File: ${file.path}');
+      _logger.info('Upload photo attempt for file: ${file.path}');
       final response = await _apiService.uploadPhoto(file);
-      print('Upload Photo Response: ${response.data.toJson()}');
+      _logger.info('Upload photo successful for file: ${file.path}');
       return response.data;
     } on DioException catch (e) {
-      print('Upload Photo DioError: ${e.response?.data}');
-      print('Upload Photo Status Code: ${e.response?.statusCode}');
+      _logger.error('Upload photo failed for file: ${file.path}', e);
       throw _handleDioError(e);
     } catch (e) {
-      print('Upload Photo Error: $e');
+      _logger.error('Upload photo failed for file: ${file.path}', e);
       throw Exception('Upload photo failed: $e');
     }
   }

@@ -5,7 +5,6 @@ import 'package:easy_localization/easy_localization.dart';
 // import 'firebase_options.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 // import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -13,10 +12,9 @@ import 'core/theme/app_theme.dart';
 import 'core/di/injection.dart';
 import 'core/services/logger_service.dart';
 import 'core/services/storage_service.dart';
+import 'core/routes/app_router.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/bloc/auth_event.dart';
-import 'features/auth/presentation/pages/login_page.dart';
-import 'features/home/presentation/pages/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,15 +56,12 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late final LoggerService _logger;
-  // late final LocalizationService _localizationService;
-  late final StorageService _storageService;
 
   @override
   void initState() {
     super.initState();
     _logger = getIt<LoggerService>();
     // _localizationService = getIt<LocalizationService>();
-    _storageService = getIt<StorageService>();
 
     _initializeApp();
   }
@@ -81,112 +76,33 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider<LoggerService>.value(value: _logger),
-        // Provider<LocalizationService>.value(value: _localizationService),
-        Provider<StorageService>.value(value: _storageService),
-      ],
-      child: BlocProvider(
-        create: (context) {
-          final authBloc = getIt<AuthBloc>();
-          authBloc.add(CheckAuthStatus());
-          return authBloc;
-        },
-        child: MaterialApp(
-          title: 'Case Study',
-          debugShowCheckedModeBanner: false,
+    return BlocProvider(
+      create: (context) {
+        final authBloc = getIt<AuthBloc>();
+        authBloc.add(CheckAuthStatus());
+        return authBloc;
+      },
+      child: MaterialApp.router(
+        title: 'Case Study',
+        debugShowCheckedModeBanner: false,
 
-          // Localization
-          localizationsDelegates: context.localizationDelegates,
-          supportedLocales: context.supportedLocales,
-          locale: context.locale,
+        // Localization
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
 
-          // Theme
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: ThemeMode.dark, // Default to dark theme
-          // Navigation
-          home: const StartPage(),
+        // Theme
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.dark, // Default to dark theme
+        // Router
+        routerConfig: appRouter,
 
-          // Firebase Analytics
-          // navigatorObservers: [
-          //   FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
-          // ],
-        ),
+        // Firebase Analytics
+        // navigatorObservers: [
+        //   FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+        // ],
       ),
     );
-  }
-}
-
-class StartPage extends StatefulWidget {
-  const StartPage({super.key});
-
-  @override
-  State<StartPage> createState() => _StartPageState();
-}
-
-class _StartPageState extends State<StartPage> {
-  late final StorageService _storageService;
-
-  @override
-  void initState() {
-    super.initState();
-    _storageService = getIt<StorageService>();
-
-    Future.delayed(const Duration(seconds: 2), () {
-      initFunction();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.primaryColor,
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-          image: const DecorationImage(
-            image: AssetImage('assets/images/SinFlixSplash.png'),
-          ),
-          color: AppTheme.primaryColor,
-        ),
-      ),
-    );
-  }
-
-  void initFunction() async {
-    try {
-      // Token kontrolü yap
-      final token = await _storageService.getToken();
-      final userData = await _storageService.getUserData();
-
-      // Widget hala mounted mı kontrol et
-      if (!mounted) return;
-
-      if (token != null && userData != null) {
-        // Token varsa direkt home page'e git
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
-      } else {
-        // Token yoksa login page'e git
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginPage()),
-        );
-      }
-    } catch (e) {
-      // Widget hala mounted mı kontrol et
-      if (!mounted) return;
-
-      // Hata durumunda login page'e git
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-      );
-    }
   }
 }

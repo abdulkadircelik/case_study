@@ -2,20 +2,26 @@ import 'package:dio/dio.dart';
 import '../../domain/repositories/movie_repository.dart';
 import '../../domain/models/movie_response_model.dart';
 import '../services/movie_api_service.dart';
+import '../../../../core/services/logger_service.dart';
 
 class MovieRepositoryImpl implements MovieRepository {
   final MovieApiService _apiService;
+  final LoggerService _logger;
 
-  MovieRepositoryImpl(this._apiService);
+  MovieRepositoryImpl(this._apiService, this._logger);
 
   @override
   Future<MovieResponseModel> getMovies(int page) async {
     try {
+      _logger.info('Get movies attempt for page: $page');
       final response = await _apiService.getMovies(page);
+      _logger.info('Get movies successful for page: $page');
       return response;
     } on DioException catch (e) {
+      _logger.error('Get movies failed for page: $page', e);
       throw _handleDioError(e);
     } catch (e) {
+      _logger.error('Get movies failed for page: $page', e);
       throw Exception('Get movies failed: $e');
     }
   }

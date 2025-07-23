@@ -5,12 +5,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
-import 'login_page.dart';
 
 class UploadPhotoPage extends StatefulWidget {
   const UploadPhotoPage({super.key});
@@ -200,22 +200,12 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
         if (state is AuthAuthenticated) {
           _showSuccessSnackBar('upload.photo_uploaded'.tr());
           // Navigate to login page after successful upload
-          Future.delayed(const Duration(seconds: 2), () {
-            if (mounted) {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginPage()),
-                (route) => false,
-              );
-            }
-          });
+          if (mounted) {
+            context.go('/login');
+          }
         } else if (state is AuthUnauthenticated) {
           // Navigate to login page
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginPage()),
-            (route) => false,
-          );
+          context.go('/login');
         } else if (state is AuthError) {
           _showErrorSnackBar(state.message);
         }

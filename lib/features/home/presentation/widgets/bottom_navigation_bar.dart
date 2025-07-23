@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../profile/presentation/pages/profile_page.dart';
-import '../pages/home_page.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
@@ -26,9 +25,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
                 isSelected: currentIndex == 0,
                 onTap: () {
                   if (currentIndex != 0) {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => const HomePage()),
-                    );
+                    context.go('/home');
                   }
                 },
               ),
@@ -39,11 +36,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
                 isSelected: currentIndex == 1,
                 onTap: () {
                   if (currentIndex != 1) {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => const ProfilePage(),
-                      ),
-                    );
+                    context.go('/profile');
                   }
                 },
               ),

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
 import '../widgets/custom_text_field.dart';
@@ -12,7 +13,6 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import '../../domain/models/register_request_model.dart';
-import 'upload_photo_page.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -125,10 +125,7 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           );
           // Navigate to upload photo page
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const UploadPhotoPage()),
-          );
+          context.go('/upload-photo');
         } else if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message), backgroundColor: Colors.red),

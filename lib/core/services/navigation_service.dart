@@ -8,40 +8,16 @@ class NavigationService {
 
   NavigatorState get navigator => navigatorKey.currentState!;
 
-  void push(String routeName, {Object? arguments}) {
-    navigator.pushNamed(routeName, arguments: arguments);
-  }
-
-  void pushReplacement(String routeName, {Object? arguments}) {
-    navigator.pushReplacementNamed(routeName, arguments: arguments);
-  }
-
-  void pop() {
-    navigator.pop();
-  }
-
-  void popUntil(String routeName) {
-    navigator.popUntil(ModalRoute.withName(routeName));
-  }
-
-  void pushAndRemoveUntil(String routeName, {Object? arguments}) {
-    navigator.pushNamedAndRemoveUntil(
-      routeName,
-      (route) => false,
-      arguments: arguments,
-    );
-  }
-
-  // GoRouter methods
+  // GoRouter methods - Primary navigation methods
   void go(String location, {Object? extra}) {
     GoRouter.of(navigator.context).go(location, extra: extra);
   }
 
-  void pushGo(String location, {Object? extra}) {
+  void push(String location, {Object? extra}) {
     GoRouter.of(navigator.context).push(location, extra: extra);
   }
 
-  void popGo() {
+  void pop() {
     GoRouter.of(navigator.context).pop();
   }
 
@@ -67,5 +43,30 @@ class NavigationService {
     GoRouter.of(
       navigator.context,
     ).pushNamed(name, pathParameters: pathParameters, extra: extra);
+  }
+
+  // Legacy Navigator methods (for backward compatibility)
+  void pushLegacy(String routeName, {Object? arguments}) {
+    navigator.pushNamed(routeName, arguments: arguments);
+  }
+
+  void pushReplacementLegacy(String routeName, {Object? arguments}) {
+    navigator.pushReplacementNamed(routeName, arguments: arguments);
+  }
+
+  void popLegacy() {
+    navigator.pop();
+  }
+
+  void popUntilLegacy(String routeName) {
+    navigator.popUntil(ModalRoute.withName(routeName));
+  }
+
+  void pushAndRemoveUntilLegacy(String routeName, {Object? arguments}) {
+    navigator.pushNamedAndRemoveUntil(
+      routeName,
+      (route) => false,
+      arguments: arguments,
+    );
   }
 }

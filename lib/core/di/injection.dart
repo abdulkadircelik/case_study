@@ -51,19 +51,43 @@ Future<void> configureDependencies() async {
         if (token != null && token.isNotEmpty) {
           options.headers['Authorization'] = 'Bearer $token';
         }
-        print('Request URL: ${options.uri}');
-        print('Request Headers: ${options.headers}');
-        print('Request Data: ${options.data}');
+        getIt<LoggerService>().info('Request URL: ${options.uri}');
+        getIt<LoggerService>().debug('Request Headers: ${options.headers}');
+        getIt<LoggerService>().debug('Request Data: ${options.data}');
         handler.next(options);
       },
       onResponse: (response, handler) {
-        print('Response Status: ${response.statusCode}');
-        print('Response Data: ${response.data}');
+        getIt<LoggerService>().info('Response Status: ${response.statusCode}');
+        getIt<LoggerService>().debug('Response Data: ${response.data}');
         handler.next(response);
       },
-      onError: (error, handler) {
-        print('Error Status: ${error.response?.statusCode}');
-        print('Error Data: ${error.response?.data}');
+      onError: (error, handler) async {
+        getIt<LoggerService>().error(
+          'Error Status: ${error.response?.statusCode}',
+        );
+        getIt<LoggerService>().error('Error Data: ${error.response?.data}');
+
+        // Token refresh logic for 401 errors
+        if (error.response?.statusCode == 401) {
+          try {
+            final storageService = getIt<StorageService>();
+            final refreshToken = await storageService.getRefreshToken();
+
+            if (refreshToken != null && refreshToken.isNotEmpty) {
+              // Try to refresh token
+              // Note: You'll need to implement the refresh token API call
+              getIt<LoggerService>().info('Attempting token refresh');
+
+              // For now, just clear the token and redirect to login
+              await storageService.clearSecureStorage();
+              getIt<LoggerService>().warning('Token expired, clearing storage');
+            }
+          } catch (refreshError) {
+            getIt<LoggerService>().error('Token refresh failed', refreshError);
+            await getIt<StorageService>().clearSecureStorage();
+          }
+        }
+
         handler.next(error);
       },
     ),
@@ -78,15 +102,16 @@ Future<void> configureDependencies() async {
 
   // Repositories
   getIt.registerSingleton<AuthRepository>(
-    AuthRepositoryImpl(getIt<AuthApiService>()),
+    AuthRepositoryImpl(getIt<AuthApiService>(), getIt<LoggerService>()),
   );
   getIt.registerSingleton<MovieRepository>(
-    MovieRepositoryImpl(getIt<MovieApiService>()),
+    MovieRepositoryImpl(getIt<MovieApiService>(), getIt<LoggerService>()),
   );
   getIt.registerSingleton<ProfileRepository>(
     ProfileRepositoryImpl(
       getIt<UserProfileApiService>(),
       getIt<MovieApiService>(),
+      getIt<LoggerService>(),
     ),
   );
 

@@ -5,22 +5,32 @@ import '../../../home/domain/models/movie_response_model.dart';
 import '../../../home/domain/models/movie_model.dart';
 import '../services/user_profile_api_service.dart';
 import '../../../home/data/services/movie_api_service.dart';
+import '../../../../core/services/logger_service.dart';
 import 'dart:io';
 
 class ProfileRepositoryImpl implements ProfileRepository {
   final UserProfileApiService _profileApiService;
   final MovieApiService _movieApiService;
+  final LoggerService _logger;
 
-  ProfileRepositoryImpl(this._profileApiService, this._movieApiService);
+  ProfileRepositoryImpl(
+    this._profileApiService,
+    this._movieApiService,
+    this._logger,
+  );
 
   @override
   Future<UserProfileModel> getUserProfile() async {
     try {
+      _logger.info('Get user profile attempt');
       final response = await _profileApiService.getUserProfile();
+      _logger.info('Get user profile successful');
       return response.data;
     } on DioException catch (e) {
+      _logger.error('Get user profile failed', e);
       throw _handleDioError(e);
     } catch (e) {
+      _logger.error('Get user profile failed', e);
       throw Exception('Get user profile failed: $e');
     }
   }

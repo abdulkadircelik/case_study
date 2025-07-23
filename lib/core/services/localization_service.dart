@@ -21,13 +21,17 @@ class LocalizationService {
       await context.setLocale(Locale(savedLanguage));
     } else if (context.mounted) {
       await context.setLocale(const Locale(defaultLanguage));
-      await _storageService.saveLanguage(defaultLanguage);
+      if (context.mounted) {
+        await _storageService.saveLanguage(defaultLanguage);
+      }
     }
   }
 
   Future<void> changeLanguage(BuildContext context, String languageCode) async {
-    await context.setLocale(Locale(languageCode));
-    await _storageService.saveLanguage(languageCode);
+    if (context.mounted) {
+      await context.setLocale(Locale(languageCode));
+      await _storageService.saveLanguage(languageCode);
+    }
   }
 
   String getCurrentLanguage(BuildContext context) {

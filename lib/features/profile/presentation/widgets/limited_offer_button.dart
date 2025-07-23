@@ -168,7 +168,7 @@ class LimitedOfferBottomSheet extends StatelessWidget {
           child: Icon(icon, color: Colors.pink, size: 26),
         ),
         const SizedBox(height: 8),
-        Container(
+        SizedBox(
           width: 70,
           child: Text(
             label,
