@@ -3,6 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 import '../../../../core/di/injection.dart';
 import '../bloc/profile_bloc.dart';
 import '../bloc/profile_event.dart';
@@ -273,16 +275,11 @@ class _ProfilePageState extends State<ProfilePage> {
       // Show loading
       _showLoadingSnackBar('Fotoğraf yükleniyor...');
 
-      // Create FormData
-      final formData = FormData.fromMap({
-        'photo': await MultipartFile.fromFile(
-          image.path,
-          filename: 'profile_photo.jpg',
-        ),
-      });
+      // Convert XFile to File
+      final file = File(image.path);
 
       // Upload photo
-      _profileBloc.add(UploadProfilePhoto(formData));
+      _profileBloc.add(UploadProfilePhoto(file));
     } catch (e) {
       _showErrorSnackBar('profile.photo_upload_error'.tr());
     }

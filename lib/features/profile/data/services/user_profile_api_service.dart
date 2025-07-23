@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import '../../domain/models/user_profile_model.dart';
@@ -18,8 +19,9 @@ abstract class UserProfileApiService {
     @Body() Map<String, dynamic> profileData,
   );
 
-  @POST('/user/profile/photo')
+  @POST('/user/upload_photo')
+  @MultiPart()
   Future<UserProfileResponseModel> uploadProfilePhoto(
-    @Body() FormData photoData,
+    @Part(name: 'file') File photo,
   );
 }

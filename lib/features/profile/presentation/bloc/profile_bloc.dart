@@ -69,7 +69,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if (currentState is ProfileLoaded) {
       try {
         final updatedProfile = await _profileRepository.uploadProfilePhoto(
-          event.photoData,
+          event.photoFile,
         );
         emit(currentState.copyWith(userProfile: updatedProfile));
       } catch (e) {

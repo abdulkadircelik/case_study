@@ -5,6 +5,7 @@ import '../../../home/domain/models/movie_response_model.dart';
 import '../../../home/domain/models/movie_model.dart';
 import '../services/user_profile_api_service.dart';
 import '../../../home/data/services/movie_api_service.dart';
+import 'dart:io';
 
 class ProfileRepositoryImpl implements ProfileRepository {
   final UserProfileApiService _profileApiService;
@@ -39,9 +40,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-  Future<UserProfileModel> uploadProfilePhoto(FormData photoData) async {
+  Future<UserProfileModel> uploadProfilePhoto(File photoFile) async {
     try {
-      final response = await _profileApiService.uploadProfilePhoto(photoData);
+      final response = await _profileApiService.uploadProfilePhoto(photoFile);
       return response.data;
     } on DioException catch (e) {
       throw _handleDioError(e);

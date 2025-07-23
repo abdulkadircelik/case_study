@@ -4,6 +4,7 @@ part 'user_profile_model.g.dart';
 
 @JsonSerializable()
 class UserProfileModel {
+  @JsonKey(fromJson: _idFromJson, toJson: _idToJson)
   final String id;
   final String name;
   final String email;
@@ -26,4 +27,17 @@ class UserProfileModel {
   // Convenience getters
   String get userId => id;
   String? get profileImage => photoUrl;
+
+  // Helper methods for id conversion
+  static String _idFromJson(dynamic value) {
+    if (value is int) {
+      return value.toString();
+    } else if (value is String) {
+      return value;
+    } else {
+      return value?.toString() ?? '';
+    }
+  }
+
+  static String _idToJson(String id) => id;
 }

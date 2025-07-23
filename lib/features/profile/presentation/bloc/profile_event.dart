@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:dio/dio.dart';
+import 'dart:io';
 
 abstract class ProfileEvent extends Equatable {
   const ProfileEvent();
@@ -26,10 +26,10 @@ class UpdateUserProfile extends ProfileEvent {
 }
 
 class UploadProfilePhoto extends ProfileEvent {
-  final FormData photoData;
+  final File photoFile;
 
-  const UploadProfilePhoto(this.photoData);
+  const UploadProfilePhoto(this.photoFile);
 
   @override
-  List<Object?> get props => [photoData];
+  List<Object?> get props => [photoFile];
 }
