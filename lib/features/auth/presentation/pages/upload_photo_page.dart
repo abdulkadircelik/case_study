@@ -1,10 +1,16 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/di/injection.dart';
+import '../bloc/auth_bloc.dart';
+import '../bloc/auth_event.dart';
+import '../bloc/auth_state.dart';
+import 'login_page.dart';
 
 class UploadPhotoPage extends StatefulWidget {
   const UploadPhotoPage({super.key});
@@ -15,12 +21,13 @@ class UploadPhotoPage extends StatefulWidget {
 
 class _UploadPhotoPageState extends State<UploadPhotoPage> {
   File? _selectedImage;
-  bool _isLoading = false;
   final ImagePicker _picker = ImagePicker();
+  late final AuthBloc _authBloc;
 
   @override
   void initState() {
     super.initState();
+    _authBloc = getIt<AuthBloc>();
     // _requestPermissions(); // Şimdilik devre dışı bırakıyoruz
   }
 
@@ -166,33 +173,10 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
-
     try {
-      // Simulate upload process
-      await Future.delayed(const Duration(seconds: 2));
-
-      if (mounted) {
-        _showSuccessSnackBar('upload.photo_uploaded'.tr());
-
-        // TODO: Navigate to next page (e.g., home page)
-        // Navigator.pushReplacement(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => const HomePage()),
-        // );
-      }
+      _authBloc.add(UploadPhotoRequested(_selectedImage!));
     } catch (e) {
-      if (mounted) {
-        _showErrorSnackBar('upload.photo_upload_error'.tr());
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      _showErrorSnackBar('upload.photo_upload_error'.tr());
     }
   }
 
@@ -210,148 +194,183 @@ class _UploadPhotoPageState extends State<UploadPhotoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: Container(
-          margin: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppTheme.surfaceColor,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: AppTheme.textPrimaryColor,
-              size: 20,
+    return BlocListener<AuthBloc, AuthState>(
+      bloc: _authBloc,
+      listener: (context, state) {
+        if (state is AuthAuthenticated) {
+          _showSuccessSnackBar('upload.photo_uploaded'.tr());
+          // Navigate to login page after successful upload
+          Future.delayed(const Duration(seconds: 2), () {
+            if (mounted) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+                (route) => false,
+              );
+            }
+          });
+        } else if (state is AuthUnauthenticated) {
+          // Navigate to login page
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+            (route) => false,
+          );
+        } else if (state is AuthError) {
+          _showErrorSnackBar(state.message);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppTheme.backgroundColor,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppTheme.surfaceColor,
+              borderRadius: BorderRadius.circular(12),
             ),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ),
-        title: Text(
-          'upload.profile_detail'.tr(),
-          style: const TextStyle(
-            color: AppTheme.textPrimaryColor,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 40),
-
-            // Title
-            Text(
-              'upload.upload_photos'.tr(),
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
+            child: IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios,
                 color: AppTheme.textPrimaryColor,
+                size: 20,
               ),
-              textAlign: TextAlign.center,
-            ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.3),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+          title: Text(
+            'upload.profile_detail'.tr(),
+            style: const TextStyle(
+              color: AppTheme.textPrimaryColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          centerTitle: true,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 40),
 
-            const SizedBox(height: 16),
+              // Title
+              Text(
+                'upload.upload_photos'.tr(),
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.textPrimaryColor,
+                ),
+                textAlign: TextAlign.center,
+              ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.3),
 
-            // Subtitle
-            Text(
-                  'upload.upload_subtitle'.tr(),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: AppTheme.textSecondaryColor,
-                    height: 1.5,
-                  ),
-                  textAlign: TextAlign.center,
-                )
-                .animate()
-                .fadeIn(delay: 200.ms, duration: 600.ms)
-                .slideY(begin: -0.3),
+              const SizedBox(height: 16),
 
-            const SizedBox(height: 48),
+              // Subtitle
+              Text(
+                    'upload.upload_subtitle'.tr(),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: AppTheme.textSecondaryColor,
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  )
+                  .animate()
+                  .fadeIn(delay: 200.ms, duration: 600.ms)
+                  .slideY(begin: -0.3),
 
-            // Photo Upload Area
-            Expanded(
-              child:
-                  Center(
-                        child: GestureDetector(
-                          onTap: _showImageSourceDialog,
-                          child: Container(
-                            width: 200,
-                            height: 200,
-                            decoration: BoxDecoration(
-                              color: AppTheme.inputBackgroundColor,
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: _selectedImage != null
-                                    ? AppTheme.primaryColor
-                                    : AppTheme.borderColor,
-                                width: _selectedImage != null ? 2 : 1,
+              const SizedBox(height: 48),
+
+              // Photo Upload Area
+              Expanded(
+                child:
+                    Center(
+                          child: GestureDetector(
+                            onTap: _showImageSourceDialog,
+                            child: Container(
+                              width: 200,
+                              height: 200,
+                              decoration: BoxDecoration(
+                                color: AppTheme.inputBackgroundColor,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: _selectedImage != null
+                                      ? AppTheme.primaryColor
+                                      : AppTheme.borderColor,
+                                  width: _selectedImage != null ? 2 : 1,
+                                ),
                               ),
-                            ),
-                            child: _selectedImage != null
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(14),
-                                    child: Image.file(
-                                      _selectedImage!,
-                                      fit: BoxFit.cover,
-                                      width: 200,
-                                      height: 200,
-                                    ),
-                                  )
-                                : Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.add_photo_alternate_outlined,
-                                        size: 48,
-                                        color: AppTheme.textSecondaryColor,
+                              child: _selectedImage != null
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(14),
+                                      child: Image.file(
+                                        _selectedImage!,
+                                        fit: BoxFit.cover,
+                                        width: 200,
+                                        height: 200,
                                       ),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        'upload.select_photo'.tr(),
-                                        style: const TextStyle(
-                                          fontSize: 16,
+                                    )
+                                  : Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.add_photo_alternate_outlined,
+                                          size: 48,
                                           color: AppTheme.textSecondaryColor,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                          ),
-                        ),
-                      )
-                      .animate()
-                      .fadeIn(delay: 400.ms, duration: 600.ms)
-                      .scale(begin: const Offset(0.8, 0.8)),
-            ),
-
-            const SizedBox(height: 48),
-
-            // Continue Button
-            ElevatedButton(
-                  onPressed: _isLoading ? null : _handleContinue,
-                  child: _isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              AppTheme.textPrimaryColor,
+                                        const SizedBox(height: 16),
+                                        Text(
+                                          'upload.select_photo'.tr(),
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            color: AppTheme.textSecondaryColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                             ),
                           ),
                         )
-                      : Text('upload.continue'.tr()),
-                )
-                .animate()
-                .fadeIn(delay: 600.ms, duration: 600.ms)
-                .slideY(begin: 0.3),
-          ],
+                        .animate()
+                        .fadeIn(delay: 400.ms, duration: 600.ms)
+                        .scale(begin: const Offset(0.8, 0.8)),
+              ),
+
+              const SizedBox(height: 48),
+
+              // Continue Button
+              BlocBuilder<AuthBloc, AuthState>(
+                    bloc: _authBloc,
+                    builder: (context, state) {
+                      return ElevatedButton(
+                        onPressed: state is AuthLoading
+                            ? null
+                            : _handleContinue,
+                        child: state is AuthLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    AppTheme.textPrimaryColor,
+                                  ),
+                                ),
+                              )
+                            : Text('upload.continue'.tr()),
+                      );
+                    },
+                  )
+                  .animate()
+                  .fadeIn(delay: 600.ms, duration: 600.ms)
+                  .slideY(begin: 0.3),
+            ],
+          ),
         ),
       ),
     );

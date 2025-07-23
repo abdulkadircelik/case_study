@@ -6,13 +6,17 @@ import 'package:easy_localization/easy_localization.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 // import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/di/injection.dart';
 import 'core/services/logger_service.dart';
 import 'core/services/storage_service.dart';
+import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/auth/presentation/bloc/auth_event.dart';
 import 'features/auth/presentation/pages/login_page.dart';
+import 'features/home/presentation/pages/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -83,26 +87,33 @@ class _MyAppState extends State<MyApp> {
         // Provider<LocalizationService>.value(value: _localizationService),
         Provider<StorageService>.value(value: _storageService),
       ],
-      child: MaterialApp(
-        title: 'Case Study',
-        debugShowCheckedModeBanner: false,
+      child: BlocProvider(
+        create: (context) {
+          final authBloc = getIt<AuthBloc>();
+          authBloc.add(CheckAuthStatus());
+          return authBloc;
+        },
+        child: MaterialApp(
+          title: 'Case Study',
+          debugShowCheckedModeBanner: false,
 
-        // Localization
-        localizationsDelegates: context.localizationDelegates,
-        supportedLocales: context.supportedLocales,
-        locale: context.locale,
+          // Localization
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
+          locale: context.locale,
 
-        // Theme
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.dark, // Default to dark theme
-        // Navigation
-        home: const StartPage(),
+          // Theme
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.dark, // Default to dark theme
+          // Navigation
+          home: const StartPage(),
 
-        // Firebase Analytics
-        // navigatorObservers: [
-        //   FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
-        // ],
+          // Firebase Analytics
+          // navigatorObservers: [
+          //   FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+          // ],
+        ),
       ),
     );
   }
@@ -116,12 +127,16 @@ class StartPage extends StatefulWidget {
 }
 
 class _StartPageState extends State<StartPage> {
+  late final StorageService _storageService;
+
   @override
   void initState() {
+    super.initState();
+    _storageService = getIt<StorageService>();
+
     Future.delayed(const Duration(seconds: 2), () {
       initFunction();
     });
-    super.initState();
   }
 
   @override
@@ -142,11 +157,30 @@ class _StartPageState extends State<StartPage> {
   }
 
   void initFunction() async {
-    // Onboarding'i test etmek için önce onboarding'e git
-    // Get.offAllNamed(RoutesClass.onboardingScreen);
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginPage()),
-    );
+    try {
+      // Token kontrolü yap
+      final token = await _storageService.getToken();
+      final userData = await _storageService.getUserData();
+
+      if (token != null && userData != null) {
+        // Token varsa direkt home page'e git
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      } else {
+        // Token yoksa login page'e git
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+      }
+    } catch (e) {
+      // Hata durumunda login page'e git
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      );
+    }
   }
 }

@@ -19,11 +19,13 @@
     "agreement_link": "okudum ve kabul ediyorum",
     "email_required": "E-posta adresi gereklidir",
     "email_invalid": "Geçerli bir e-posta adresi giriniz",
+    "email_min_length": "E-posta adresi en az 5 karakter olmalıdır",
     "password_required": "Şifre gereklidir",
     "password_min_length": "Şifre en az 6 karakter olmalıdır",
     "password_confirm_required": "Şifre tekrarı gereklidir",
     "password_mismatch": "Şifreler eşleşmiyor",
     "full_name_required": "Ad soyad gereklidir",
+    "name_min_length": "Ad soyad en az 3 karakter olmalıdır",
     "agreement_required": "Kullanıcı sözleşmesini kabul etmelisiniz",
     "login_success": "Giriş başarılı",
     "login_error": "Giriş başarısız",
@@ -76,5 +78,11 @@
   "language": {
     "turkish": "Türkçe",
     "english": "İngilizce"
+  },
+  "home": {
+    "title": "Filmler",
+    "homepage": "Anasayfa",
+    "profile": "Profil",
+    "retry": "Tekrar Dene"
   }
 } 
